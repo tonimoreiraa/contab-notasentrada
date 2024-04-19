@@ -1,4 +1,4 @@
-import puppeteer, { BoundingBox, ElementHandle, Page, Viewport } from "puppeteer"
+import puppeteer, { ElementHandle, Page } from "puppeteer"
 import fs from 'fs/promises'
 import cliProgress from 'cli-progress'
 import path from 'path'
