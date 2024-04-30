@@ -12,7 +12,7 @@ program
   .parse(process.argv)
 
 const options = program.opts()
-const outputBasePath = [options.output] ?? [__dirname, 'output']
+const outputBasePath = options.output ? [options.output] : [__dirname, 'output']
 
 async function waitForDownload(page: Page)
 {
@@ -84,7 +84,7 @@ export async function main()
             await page.click('#botaoConsulta')
             bar.update(i, { empresa: row.EMPRESA, status: 'Baixando Relatório Notas Fiscais de Entrada', })
             await waitForDownload(page)
-            await new Promise((resolve) => setTimeout(resolve, 1000))
+            await new Promise((resolve) => setTimeout(resolve, 10000))
 
             bar.update(i, { empresa: row.EMPRESA, status: 'Logout' })
             await page.evaluate(() => {
@@ -92,7 +92,7 @@ export async function main()
                 localStorage.clear()
             })
         } catch (e: any) {
-            console.error(`${row.EMPRESA}: ${e.message}`)
+            console.error(e)
             await page.evaluate(() => {
                 // @ts-ignore
                 localStorage.clear()
