@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./index.ts"
+    "dev": "nodemon ./index.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -13,7 +14,8 @@
   "dependencies": {
     "cli-progress": "^3.12.0",
     "commander": "^12.0.0",
-    "puppeteer": "^22.6.5"
+    "puppeteer": "^22.6.5",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@types/cli-progress": "^3.11.5",
