@@ -21,6 +21,5 @@
     "@types/cli-progress": "^3.11.5",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2"
-  },
-  "packageManager": "pnpm@9.0.6"
+  }
 }

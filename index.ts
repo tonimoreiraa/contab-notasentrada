@@ -58,11 +58,11 @@ export async function main()
             date.setDate(0)
 
             bar.update(i, { empresa: row.EMPRESA, status: 'Buscando Relatório Notas Fiscais de Entrada' })
-            await page.goto('https://contribuinte.sefaz.al.gov.br/cobrancadfe/#/relatorio-notas-fiscais-entrada')
-            await page.waitForSelector('#conjuntoCnpj > option:nth-child(2)')
+            await page.goto('https://contribuinte.sefaz.al.gov.br/malhafiscal/#/relatorio-contribuinte')
+            const element = await page.waitForSelector('body > jhi-main > div.container-fluid > div > jhi-relatorio-contribuinte > div > div > div.row > div > select > option')
+            const option = await (await element?.getProperty('value'))?.jsonValue()
 
-            const option = await page.$eval('#conjuntoCnpj > option:nth-child(2)', element => element.value)
-            await page.select('#conjuntoCnpj', option)
+            console.log(option)
             
             const outputDir = path.join(...outputBasePath, `${row.EMPRESA} - ${option}`)
             const client = await page.createCDPSession()
@@ -73,18 +73,17 @@ export async function main()
 
             date = new Date()
             date.setDate(0)
-            const endDate = await page.waitForSelector('#periodoTermino') as ElementHandle
+            const endDate = await page.waitForSelector('#dataFinal') as ElementHandle
             await endDate.type(date.toLocaleDateString('pt-BR'))
 
             date.setDate(1)
-            const startDate = await page.waitForSelector('#periodoInicio') as ElementHandle
+            const startDate = await page.waitForSelector('#dataInicial') as ElementHandle
             await startDate.type(date.toLocaleDateString('pt-BR'))
-            await page.select('#tipoRelatorio', 'xlsx')
+            await page.select('#formatoRelatorio', '2')
 
-            await page.click('#botaoConsulta')
+            await page.click('body > jhi-main > div.container-fluid > div > jhi-relatorio-contribuinte > div > div > div.card-body.mb-0.pb-0 > div:nth-child(9) > table > tbody > tr:nth-child(1) > td > div > button')
             bar.update(i, { empresa: row.EMPRESA, status: 'Baixando Relatório Notas Fiscais de Entrada', })
             await waitForDownload(page)
-            await new Promise((resolve) => setTimeout(resolve, 10000))
 
             bar.update(i, { empresa: row.EMPRESA, status: 'Logout' })
             await page.evaluate(() => {
