@@ -37,6 +37,8 @@ export async function main() {
     var i = 0;
     for (const row of data) {
         try {
+            const companyKey = Object.keys(row)[0]
+
             i = i + 1
             bar.update(i, { empresa: row[companyKey], status: 'Autenticando' })
 
@@ -59,7 +61,6 @@ export async function main() {
             let date = new Date()
             date.setDate(0)
 
-            const companyKey = Object.keys(row)[0]
             bar.update(i, { empresa: row[companyKey], status: 'Buscando Relatório Notas Fiscais de Entrada' })
             await page.goto('https://contribuinte.sefaz.al.gov.br/malhafiscal/#/relatorio-contribuinte')
             const element = await page.waitForSelector('body > jhi-main > div.container-fluid > div > jhi-relatorio-contribuinte > div > div > div.row > div > select > option')
