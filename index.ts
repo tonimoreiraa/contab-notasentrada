@@ -6,22 +6,20 @@ import { Command } from "commander";
 const program = new Command();
 
 program
-  .version("1.0.0")
-  .description("Contab Notas de Entrada")
-  .option("-o, --output <output path>", "Caminho da saída")
-  .parse(process.argv)
+    .version("1.0.0")
+    .description("Contab Notas de Entrada")
+    .option("-o, --output <output path>", "Caminho da saída")
+    .parse(process.argv)
 
 const options = program.opts()
 const outputBasePath = options.output ? [options.output] : [__dirname, 'output']
 
-async function waitForDownload(page: Page)
-{
+async function waitForDownload(page: Page) {
     await page.waitForSelector('.black-overlay')
     await page.waitForSelector('.black-overlay', { hidden: true, timeout: 60000 })
 }
 
-export async function main()
-{
+export async function main() {
     const bar = new cliProgress.SingleBar({
         format: ' {bar} | {empresa}: {status} | {value}/{total}'
     }, cliProgress.Presets.shades_classic)
@@ -43,15 +41,19 @@ export async function main()
             bar.update(i, { empresa: row.EMPRESA, status: 'Autenticando' })
 
             // Sign-in
-            await page.goto('https://contribuinte.sefaz.al.gov.br/#/')
-            await page.waitForSelector('.action-button')
-            await page.click('.action-button')
+            await page.goto('https://contribuinte.sefaz.al.gov.br/cobrancadfe/#/calculo-nfe')
+
+            await page.waitForNavigation()
             await page.waitForSelector('#username')
-            await page.waitForSelector('#password')
             await page.type('#username', row.LOGIN)
             await page.type('#password', row.SENHA)
-            page.click('button[type="submit"]')
-            await page.waitForSelector('#mensagem-logado-como', {timeout: 60000})
+
+            await page.click('form button[type=submit]')
+            await page.waitForNavigation();
+            const userLoggedSelector = '#logout';
+
+            await page.waitForSelector(userLoggedSelector)
+
 
             // Search
             let date = new Date()
@@ -63,7 +65,7 @@ export async function main()
             const option = await (await element?.getProperty('value'))?.jsonValue()
 
             console.log(option)
-            
+
             const outputDir = path.join(...outputBasePath, `${row.EMPRESA} - ${option}`)
             const client = await page.createCDPSession()
             await client.send('Page.setDownloadBehavior', {
@@ -98,7 +100,7 @@ export async function main()
             })
         }
     }
-    
+
     bar.stop()
 }
 
