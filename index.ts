@@ -59,7 +59,8 @@ export async function main() {
             let date = new Date()
             date.setDate(0)
 
-            bar.update(i, { empresa: row.EMPRESA, status: 'Buscando Relatório Notas Fiscais de Entrada' })
+            const companyKey = Object.keys(row)[0]
+            bar.update(i, { empresa: row[companyKey], status: 'Buscando Relatório Notas Fiscais de Entrada' })
             await page.goto('https://contribuinte.sefaz.al.gov.br/malhafiscal/#/relatorio-contribuinte')
             const element = await page.waitForSelector('body > jhi-main > div.container-fluid > div > jhi-relatorio-contribuinte > div > div > div.row > div > select > option')
             const option = await (await element?.getProperty('value'))?.jsonValue()
@@ -91,12 +92,16 @@ export async function main() {
             await page.evaluate(() => {
                 // @ts-ignore
                 localStorage.clear()
+                // @ts-ignore
+                sessionStorage.clear()
             })
         } catch (e: any) {
             console.error(e)
             await page.evaluate(() => {
                 // @ts-ignore
                 localStorage.clear()
+                // @ts-ignore
+                sessionStorage.clear()
             })
         }
     }
