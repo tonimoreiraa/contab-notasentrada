@@ -38,7 +38,7 @@ export async function main() {
     for (const row of data) {
         try {
             i = i + 1
-            bar.update(i, { empresa: row.EMPRESA, status: 'Autenticando' })
+            bar.update(i, { empresa: row[companyKey], status: 'Autenticando' })
 
             // Sign-in
             await page.goto('https://contribuinte.sefaz.al.gov.br/cobrancadfe/#/calculo-nfe')
@@ -67,7 +67,7 @@ export async function main() {
 
             console.log(option)
 
-            const outputDir = path.join(...outputBasePath, `${row.EMPRESA} - ${option}`)
+            const outputDir = path.join(...outputBasePath, `${row[companyKey]} - ${option}`)
             const client = await page.createCDPSession()
             await client.send('Page.setDownloadBehavior', {
                 behavior: 'allow',
@@ -85,10 +85,10 @@ export async function main() {
             await page.select('#formatoRelatorio', '2')
 
             await page.click('body > jhi-main > div.container-fluid > div > jhi-relatorio-contribuinte > div > div > div.card-body.mb-0.pb-0 > div:nth-child(9) > table > tbody > tr:nth-child(1) > td > div > button')
-            bar.update(i, { empresa: row.EMPRESA, status: 'Baixando Relatório Notas Fiscais de Entrada', })
+            bar.update(i, { empresa: row[companyKey], status: 'Baixando Relatório Notas Fiscais de Entrada', })
             await waitForDownload(page)
 
-            bar.update(i, { empresa: row.EMPRESA, status: 'Logout' })
+            bar.update(i, { empresa: row[companyKey], status: 'Logout' })
             await page.evaluate(() => {
                 // @ts-ignore
                 localStorage.clear()
